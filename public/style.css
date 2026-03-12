@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #d4d8dd, #eef1f4);
+  color: #1f2937;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.site-header {
+  background: rgba(243, 244, 246, 0.88);
+  border-bottom: 1px solid rgba(31, 41, 55, 0.08);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-content {
+  min-height: 90px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.brand {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  color: #374151;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.nav a:hover {
+  color: #2563eb;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+h1,
+h2 {
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+p {
+  margin-bottom: 16px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(31, 41, 55, 0.08);
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 20px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+}
+
+.hero {
+  margin-top: 0;
+}
+
+ul {
+  margin-left: 20px;
+  line-height: 1.9;
+  color: #4b5563;
+}
+
+a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.button {
+  display: inline-block;
+  margin-top: 12px;
+  background: #374151;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.button:hover {
+  background: #1f2937;
+  text-decoration: none;
+}
+
+.site-footer {
+  border-top: 1px solid rgba(31, 41, 55, 0.08);
+  background: rgba(243, 244, 246, 0.88);
+  padding: 18px 0;
+  margin-top: 20px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .header-content,
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav {
+    gap: 12px;
+  }
+}
