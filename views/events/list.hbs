@@ -1,0 +1,112 @@
+<section class="events-page">
+  <div class="container">
+    <header class="events-hero">
+      <div>
+        <p class="eyebrow">TCGConnect</p>
+        <h1>{{titulo}}</h1>
+        <p class="events-intro">
+          Explora torneos, ligas y juntas TCG en todo Chile.
+        </p>
+      </div>
+    </header>
+
+    <form class="event-filters" action="/eventos" method="GET">
+      <div class="filter-group">
+        <label for="gameid">Juego</label>
+        <select name="gameid" id="gameid">
+          <option value="">Todos los juegos</option>
+          {{#each games}}
+            <option value="{{this.id}}" {{#if (eq ../filters.gameid this.id)}}selected{{/if}}>
+              {{this.name}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="city">Ciudad</label>
+        <input
+          type="text"
+          name="city"
+          id="city"
+          list="city-suggestions"
+          value="{{filters.city}}"
+          placeholder="Ej: Santiago, Valparaíso..."
+          autocomplete="off"
+        />
+        <datalist id="city-suggestions">
+          {{#each cities}}
+            <option value="{{this}}"></option>
+          {{/each}}
+        </datalist>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+        <a class="btn btn-light" href="/eventos">Limpiar</a>
+      </div>
+    </form>
+
+    {{#if hasFilters}}
+      <div class="active-filters">
+        <span>Filtros activos:</span>
+        {{#if filters.gameid}}
+          <span class="chip">Juego seleccionado</span>
+        {{/if}}
+        {{#if filters.city}}
+          <span class="chip">Ciudad: {{filters.city}}</span>
+        {{/if}}
+      </div>
+    {{/if}}
+
+    {{#if hasEvents}}
+      <div class="cal-months">
+        {{#each calendarMonths}}
+          <div class="cal-month">
+            <div class="cal-month__header">
+              <h2>{{this.label}}</h2>
+            </div>
+
+            <div class="cal-grid">
+              <div class="cal-header">Lun</div>
+              <div class="cal-header">Mar</div>
+              <div class="cal-header">Mié</div>
+              <div class="cal-header">Jue</div>
+              <div class="cal-header">Vie</div>
+              <div class="cal-header">Sáb</div>
+              <div class="cal-header">Dom</div>
+
+              {{#each this.weeks}}
+                {{#each this.days}}
+                  {{#if this.empty}}
+                    <div class="cal-day cal-day--empty"></div>
+                  {{else}}
+                    <div class="cal-day{{#if this.hasEvents}} cal-day--has-events{{/if}}">
+                      <span class="cal-day__num">{{this.day}}</span>
+                      {{#each this.events}}
+                        <a href="/eventos/{{this.id}}" class="cal-event-chip">
+                          {{#if this.gameName}}
+                            <span class="cal-event-chip__game">{{this.gameName}}</span>
+                          {{/if}}
+                          {{this.title}}
+                        </a>
+                      {{/each}}
+                    </div>
+                  {{/if}}
+                {{/each}}
+              {{/each}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <section class="empty-events">
+        <h2>No hay eventos por ahora</h2>
+        <p>Prueba otros filtros o vuelve pronto — la comunidad está organizando torneos.</p>
+        {{#if isAuthenticated}}
+          <a href="/eventos/new" class="btn" style="margin-top:1rem;">Crear primer evento</a>
+        {{/if}}
+      </section>
+    {{/if}}
+  </div>
+</section>

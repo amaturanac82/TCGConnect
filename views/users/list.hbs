@@ -1,0 +1,44 @@
+<section class="page-section">
+  <div class="container">
+    <div class="card hero">
+      <p class="brand">Usuarios</p>
+      <h2>{{#if titulo}}{{titulo}}{{else}}Listado de usuarios{{/if}}</h2>
+      <p>
+        Revisa los perfiles registrados actualmente dentro de la plataforma.
+      </p>
+    </div>
+
+    {{> alert}}
+
+    {{#if users.length}}
+      {{#each users}}
+        <article class="card">
+          <p class="brand">{{this.role}}</p>
+          <h2>
+            {{#if this.name}}{{this.name}}{{else}}{{this.username}}{{/if}}
+          </h2>
+
+          <ul>
+            {{#if this.username}}<li><strong>Usuario:</strong> {{this.username}}</li>{{/if}}
+            {{#if this.email}}<li><strong>Email:</strong> {{this.email}}</li>{{/if}}
+            {{#if this.city}}<li><strong>Ciudad:</strong> {{this.city}}</li>{{/if}}
+            {{#if this.favoriteGame}}<li><strong>Juego favorito:</strong> {{this.favoriteGame}}</li>{{/if}}
+            {{#if this.createdAt}}<li><strong>Registrado el:</strong> {{this.createdAt}}</li>{{/if}}
+          </ul>
+
+          <div class="actions" style="margin-top: 1rem;">
+            <a href="/users/{{this.id}}" class="button">Ver perfil</a>
+            <a href="/users/{{this.id}}/edit" class="button" style="background:#6b7280;">Editar</a>
+          </div>
+        </article>
+      {{/each}}
+    {{else}}
+      <section class="card">
+        <h2>No hay usuarios para mostrar</h2>
+        <p>
+          Cuando existan usuarios registrados, aparecerán aquí con su información principal.
+        </p>
+      </section>
+    {{/if}}
+  </div>
+</section>

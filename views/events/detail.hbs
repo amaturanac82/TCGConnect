@@ -1,0 +1,152 @@
+<section class="page-section">
+  <div class="container">
+
+    <div class="event-detail">
+
+      {{!-- Imagen / placeholder --}}
+      <div class="event-detail__image">
+        {{#if event.flyer}}
+          <img src="{{event.flyer}}" alt="Flyer de {{event.title}}" />
+        {{else}}
+          <div class="event-detail__placeholder">
+            <span>Sin imagen</span>
+          </div>
+        {{/if}}
+      </div>
+
+      {{!-- Contenido principal --}}
+      <div>
+        <p class="eyebrow">{{event.game.name}}</p>
+        <h1 style="margin-bottom:1rem;color:var(--bg);">{{event.title}}</h1>
+
+        {{#if event.description}}
+          <p class="event-description" style="margin-bottom:1.5rem;">{{event.description}}</p>
+        {{/if}}
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Fecha</span>
+            <span>{{event.formattedDate}}</span>
+          </div>
+
+          {{#if event.time}}
+            <div class="detail-item">
+              <span class="detail-label">Hora</span>
+              <span>{{event.time}}</span>
+            </div>
+          {{/if}}
+
+          {{#if event.city}}
+            <div class="detail-item">
+              <span class="detail-label">Ciudad</span>
+              <span>{{event.city}}</span>
+            </div>
+          {{/if}}
+
+          {{#if event.locationname}}
+            <div class="detail-item">
+              <span class="detail-label">Lugar</span>
+              <span>{{event.locationname}}</span>
+            </div>
+          {{/if}}
+
+          {{#if event.capacity}}
+            <div class="detail-item">
+              <span class="detail-label">Capacidad</span>
+              <span>{{event.capacity}} jugadores</span>
+            </div>
+          {{/if}}
+
+          {{#if event.price}}
+            <div class="detail-item">
+              <span class="detail-label">Precio</span>
+              <span>${{event.price}}</span>
+            </div>
+          {{/if}}
+        </div>
+
+        {{#if event.organizer}}
+          <div class="detail-item" style="margin-top:1rem;">
+            <span class="detail-label">Organizado por</span>
+            <a href="/perfil/{{event.organizer.id}}" style="font-weight:700;color:var(--primary);">
+              {{#if event.organizer.fullname}}{{event.organizer.fullname}}{{else}}{{event.organizer.username}}{{/if}}
+            </a>
+          </div>
+        {{/if}}
+
+        {{!-- Acciones --}}
+        <div class="actions" style="margin-top:1.5rem;">
+
+          {{!-- Botón guardar favorito --}}
+          {{#if isAuthenticated}}
+            <button id="saveBtn" class="btn btn-save" data-event-id="{{event.id}}">
+              <span id="saveIcon">🔖</span>
+              <span id="saveText">Guardar evento</span>
+            </button>
+          {{/if}}
+
+          {{!-- Acciones de dueño --}}
+          {{#if isOwner}}
+            <a href="/eventos/{{event.id}}/edit" class="btn btn-secondary">Editar</a>
+
+            <form action="/eventos/{{event.id}}?_method=DELETE" method="POST" onsubmit="return confirm('¿Eliminar este evento?')">
+              <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
+          {{/if}}
+
+          <a href="/eventos" class="btn btn-light">← Volver</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{{#if isAuthenticated}}
+<script>
+(async () => {
+  const btn = document.getElementById("saveBtn");
+  if (!btn) return;
+
+  const eventId = btn.dataset.eventId;
+
+  // Verifica si ya está guardado
+  try {
+    const res  = await fetch("/saved-events", { credentials: "same-origin" });
+    const data = await res.json();
+    if (data.ok && data.data.includes(parseInt(eventId))) {
+      document.getElementById("saveIcon").textContent = "❤️";
+      document.getElementById("saveText").textContent = "Guardado";
+      btn.classList.add("btn-saved");
+      btn.dataset.saved = "true";
+    }
+  } catch (_) {}
+
+  // Toggle al hacer click
+  btn.addEventListener("click", async () => {
+    try {
+      const res  = await fetch(`/eventos/${eventId}/save`, {
+        method: "POST",
+        credentials: "same-origin",
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.message); return; }
+
+      if (data.saved) {
+        document.getElementById("saveIcon").textContent = "❤️";
+        document.getElementById("saveText").textContent = "Guardado";
+        btn.classList.add("btn-saved");
+        btn.dataset.saved = "true";
+      } else {
+        document.getElementById("saveIcon").textContent = "🔖";
+        document.getElementById("saveText").textContent = "Guardar evento";
+        btn.classList.remove("btn-saved");
+        btn.dataset.saved = "false";
+      }
+    } catch (_) {
+      alert("Error de red.");
+    }
+  });
+})();
+</script>
+{{/if}}

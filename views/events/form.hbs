@@ -1,0 +1,141 @@
+<section class="page-section">
+  <div class="container">
+    <div class="card">
+      <p class="brand">Eventos</p>
+      <h2>{{#if event.id}}Editar evento{{else}}Crear evento{{/if}}</h2>
+      <p>
+        Completa la información principal del evento para publicarlo dentro de TCGConnect.
+      </p>
+
+      {{> alert}}
+
+      <form
+        action="{{#if formAction}}{{formAction}}{{else}}{{#if event.id}}/events/{{event.id}}/edit{{else}}/events/create{{/if}}{{/if}}"
+        method="POST"
+      >
+        {{#if methodOverride}}
+          <input type="hidden" name="_method" value="{{methodOverride}}">
+        {{/if}}
+
+        <div class="form-group">
+          <label for="title">Nombre del evento</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Ej: Torneo semanal Pokémon TCG"
+            value="{{event.title}}"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="game">Juego</label>
+          <input
+            type="text"
+            id="game"
+            name="game"
+            placeholder="Ej: Pokémon TCG, Yu-Gi-Oh!, Magic: The Gathering"
+            value="{{event.game}}"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="store">Tienda u organizador</label>
+          <input
+            type="text"
+            id="store"
+            name="store"
+            placeholder="Ej: TCG Arena Ñuñoa"
+            value="{{event.store}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="city">Ciudad</label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            placeholder="Ej: Santiago"
+            value="{{event.city}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="date">Fecha</label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value="{{event.date}}"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="format">Formato</label>
+          <input
+            type="text"
+            id="format"
+            name="format"
+            placeholder="Ej: Standard, Advanced, Modern, Draft"
+            value="{{event.format}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="price">Valor de entrada</label>
+          <input
+            type="text"
+            id="price"
+            name="price"
+            placeholder="Ej: $5.000"
+            value="{{event.price}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="capacity">Cupos</label>
+          <input
+            type="number"
+            id="capacity"
+            name="capacity"
+            min="0"
+            placeholder="Ej: 32"
+            value="{{event.capacity}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="image">URL de imagen</label>
+          <input
+            type="url"
+            id="image"
+            name="image"
+            placeholder="https://..."
+            value="{{event.image}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="6"
+            placeholder="Describe el evento, premios, formato y ambiente esperado..."
+          >{{event.description}}</textarea>
+        </div>
+
+        <div class="actions" style="margin-top: 1rem;">
+          <button type="submit" class="button">
+            {{#if event.id}}Guardar cambios{{else}}Crear evento{{/if}}
+          </button>
+          <a href="/events" class="button" style="background:#6b7280;">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

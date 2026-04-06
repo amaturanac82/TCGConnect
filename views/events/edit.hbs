@@ -1,0 +1,120 @@
+<section class="page-section">
+  <div class="container container-narrow">
+    <div class="section-heading">
+      <p class="eyebrow">Eventos</p>
+      <h2>{{titulo}}</h2>
+      <p class="section-text">Actualiza la información de tu evento.</p>
+    </div>
+
+    <form id="editForm" enctype="multipart/form-data" class="card form-card">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="title">Título</label>
+          <input type="text" id="title" name="title" value="{{event.title}}" required />
+        </div>
+
+        <div class="form-group full">
+          <label for="description">Descripción</label>
+          <textarea id="description" name="description" rows="4" required>{{event.description}}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="format">Formato</label>
+          <input type="text" id="format" name="format" value="{{event.format}}" placeholder="Standard, Commander, etc." />
+        </div>
+
+        <div class="form-group">
+          <label for="gameid">Juego</label>
+          <select id="gameid" name="gameid" required>
+            <option value="">Selecciona un juego</option>
+            {{#each games}}
+              <option value="{{this.id}}" {{#if (eq this.id ../event.gameid)}}selected{{/if}}>
+                {{this.name}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label for="locationname">Lugar</label>
+          <input type="text" id="locationname" name="locationname" value="{{event.locationname}}" required />
+        </div>
+
+        <div class="form-group full">
+          <label for="address">Dirección</label>
+          <input type="text" id="address" name="address" value="{{event.address}}" />
+        </div>
+
+        <div class="form-group">
+          <label for="city">Ciudad</label>
+          <input type="text" id="city" name="city" value="{{event.city}}" />
+        </div>
+
+        <div class="form-group">
+          <label for="eventdate">Fecha y hora</label>
+          <input type="datetime-local" id="eventdate" name="eventdate" value="{{event.eventdate}}" required />
+        </div>
+
+        <div class="form-group full">
+          <label for="registrationurl">URL de registro</label>
+          <input type="url" id="registrationurl" name="registrationurl" value="{{event.registrationurl}}" placeholder="https://..." />
+        </div>
+
+        <div class="form-group full">
+          <label for="flyer">Reemplazar flyer</label>
+          <input type="file" id="flyer" name="flyer" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+          {{#if event.flyer}}
+            <small class="input-help">Flyer actual: {{event.flyer}}. Sube uno nuevo para reemplazarlo.</small>
+          {{else}}
+            <small class="input-help">Formatos permitidos: JPG, PNG y WEBP. Máximo 2 MB.</small>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="actions mt-3">
+        <button type="submit" class="btn">Guardar cambios</button>
+        <a href="/eventos/{{event.id}}" class="btn btn-light">Cancelar</a>
+      </div>
+
+      <p id="formMessage" class="form-message"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  document.getElementById("editForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const message = document.getElementById("formMessage");
+    message.textContent = "";
+    message.className = "form-message";
+
+    const formData = new FormData(e.target);
+    const id = {{event.id}};
+
+    try {
+      const res = await fetch(`/events/${id}`, {
+        method: "PUT",
+        credentials: "same-origin",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        message.textContent = data.message || "No se pudo actualizar el evento.";
+        message.className = "form-message error";
+        return;
+      }
+
+      message.textContent = "¡Evento actualizado correctamente!";
+      message.className = "form-message success";
+
+      setTimeout(() => {
+        window.location.href = `/eventos/${id}`;
+      }, 800);
+    } catch (err) {
+      message.textContent = "Error de red al actualizar el evento.";
+      message.className = "form-message error";
+    }
+  });
+</script>

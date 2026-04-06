@@ -1,0 +1,119 @@
+<section class="page-section">
+  <div class="container">
+    <div class="card">
+      <p class="brand">Juegos</p>
+      <h2>{{#if game.id}}Editar juego{{else}}Crear juego{{/if}}</h2>
+      <p>
+        Registra un TCG o actualiza su información principal.
+      </p>
+
+      {{> alert}}
+
+      <form
+        action="{{#if formAction}}{{formAction}}{{else}}{{#if game.id}}/games/{{game.id}}/edit{{else}}/games/create{{/if}}{{/if}}"
+        method="POST"
+      >
+        {{#if methodOverride}}
+          <input type="hidden" name="_method" value="{{methodOverride}}">
+        {{/if}}
+
+        <div class="form-group">
+          <label for="name">Nombre del juego</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Ej: Pokémon TCG"
+            value="{{game.name}}"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoría</label>
+          <input
+            type="text"
+            id="category"
+            name="category"
+            placeholder="Ej: Trading Card Game"
+            value="{{game.category}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="publisher">Editorial / marca</label>
+          <input
+            type="text"
+            id="publisher"
+            name="publisher"
+            placeholder="Ej: The Pokémon Company"
+            value="{{game.publisher}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="format">Formato principal</label>
+          <input
+            type="text"
+            id="format"
+            name="format"
+            placeholder="Ej: Standard, Casual, Collector"
+            value="{{game.format}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="releaseYear">Año de lanzamiento</label>
+          <input
+            type="number"
+            id="releaseYear"
+            name="releaseYear"
+            min="1900"
+            max="2100"
+            placeholder="Ej: 1996"
+            value="{{game.releaseYear}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="minPlayers">Cantidad de jugadores</label>
+          <input
+            type="text"
+            id="minPlayers"
+            name="minPlayers"
+            placeholder="Ej: 2 o 2-4"
+            value="{{game.minPlayers}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="image">URL de imagen</label>
+          <input
+            type="url"
+            id="image"
+            name="image"
+            placeholder="https://..."
+            value="{{game.image}}"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="6"
+            placeholder="Describe el juego, su comunidad y su propuesta..."
+          >{{game.description}}</textarea>
+        </div>
+
+        <div class="actions" style="margin-top: 1rem;">
+          <button type="submit" class="button">
+            {{#if game.id}}Guardar cambios{{else}}Crear juego{{/if}}
+          </button>
+          <a href="/games" class="button" style="background:#6b7280;">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

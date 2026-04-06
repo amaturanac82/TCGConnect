@@ -1,44 +1,43 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
+"use strict";
+const { Model } = require("sequelize");
 
-const User = sequelize.define(
-  "User",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    nombre: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-        len: [2, 100],
-      },
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        notEmpty: true,
-        isEmail: true,
-      },
-    },
-    edad: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        min: 0,
-        isInt: true,
-      },
-    },
-  },
-  {
-    tableName: "usuarios",
-    timestamps: false,
-  },
-);
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    static associate(models) {
+      User.hasMany(models.Event, {
+        foreignKey: "organizer_id",
+        as: "organizedEvents",
+      });
 
-module.exports = User;
+      User.belongsToMany(models.Event, {
+        through: models.SavedEvent,
+        foreignKey: "user_id",
+        otherKey: "event_id",
+        as: "savedEvents",
+      });
+    }
+  }
+
+  User.init(
+    {
+      fullname: {
+        type: DataTypes.STRING,
+        field: "full_name",
+      },
+      username: DataTypes.STRING,
+      email: DataTypes.STRING,
+      password: DataTypes.STRING,
+      role: DataTypes.STRING,
+      city: DataTypes.STRING,
+      avatar: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "User",
+      tableName: "users",
+      underscored: true,
+    }
+  );
+
+  return User;
+};

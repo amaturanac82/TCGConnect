@@ -1,37 +1,13 @@
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{titulo}}</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container header-content">
-        <div>
-          <p class="brand">Node · Express · Sequelize</p>
-          <h1>Gestión de Usuarios</h1>
-        </div>
+  {{> head}}
+<body>
+  {{> navbar}}
 
-        <nav class="nav">
-          <a href="/">Inicio</a>
-          <a href="/usuarios/vista">Usuarios</a>
-          <a href="/usuarios/create">Crear</a>
-          <a href="/status">Status</a>
-          <a href="/about">About</a>
-        </nav>
-      </div>
-    </header>
+  <main>
+    {{{body}}}
+  </main>
 
-    <main class="main-content">
-      {{{body}}}
-    </main>
-
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <span>Proyecto 6 - 7</span>
-        <span>Desarrollado por Andres Maturana. 2026</span>
-      </div>
-    </footer>
-  </body>
+  {{> footer}}
+</body>
 </html>

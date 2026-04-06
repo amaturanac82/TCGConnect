@@ -1,0 +1,20 @@
+<section class="page-section error-page">
+  <div class="container">
+    <div class="error-box card">
+      <p class="error-code">500</p>
+      <h1>Error interno del servidor</h1>
+      <p class="error-text">
+        Ocurrió un problema inesperado mientras procesábamos la solicitud.
+      </p>
+
+      {{#if error}}
+        <pre class="error-detail">{{error}}</pre>
+      {{/if}}
+
+      <div class="actions">
+        <a href="/" class="btn">Volver al inicio</a>
+        <a href="/events" class="btn btn-secondary">Ir a eventos</a>
+      </div>
+    </div>
+  </div>
+</section>

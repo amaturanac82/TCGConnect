@@ -1,407 +1,258 @@
-const { User } = require("../models");
+const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
+const { User, Event, Game } = require("../models");
+const { generateToken } = require("../utils/jwt");
 
-const userAttributes = ["id", "nombre", "email", "edad"];
+const COOKIE_NAME = "token";
 
-const normalizeUserData = (body = {}) => {
-  const nombre = typeof body.nombre === "string" ? body.nombre.trim() : "";
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 1000 * 60 * 60 * 2,
+});
 
-  const email =
-    typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+const sanitizeUser = (user) => ({
+  id: user.id,
+  fullname: user.fullname,
+  username: user.username,
+  email: user.email,
+  role: user.role,
+  city: user.city,
+  avatar: user.avatar,
+});
 
-  const edadRaw = body.edad;
+const userController = {
+  async list(req, res) {
+    try {
+      const users = await User.findAll({
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Event,
+            as: "organizedEvents",
+            include: [{ model: Game, as: "game" }],
+          },
+        ],
+        order: [["username", "ASC"]],
+      });
 
-  let edad = null;
-  if (edadRaw !== undefined && edadRaw !== null && edadRaw !== "") {
-    edad = Number(edadRaw);
-  }
+      return res.status(200).json({
+        ok: true,
+        message: "Usuarios obtenidos correctamente",
+        data: users,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        ok: false,
+        message: "Error al obtener los usuarios",
+        error: error.message,
+      });
+    }
+  },
 
-  return { nombre, email, edad };
-};
+  async detail(req, res) {
+    try {
+      const { id } = req.params;
 
-const validateUserData = ({ nombre, email, edad }) => {
-  if (!nombre || !email || edad === null) {
-    return "Todos los campos son obligatorios";
-  }
+      const user = await User.findByPk(id, {
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Event,
+            as: "organizedEvents",
+            include: [{ model: Game, as: "game" }],
+          },
+          {
+            model: Event,
+            as: "savedEvents",
+            through: { attributes: [] },
+            include: [{ model: Game, as: "game" }],
+          },
+        ],
+      });
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return "El email no tiene un formato válido";
-  }
+      if (!user) {
+        return res.status(404).json({
+          ok: false,
+          message: "Usuario no encontrado",
+        });
+      }
 
-  if (!Number.isInteger(edad) || edad < 0) {
-    return "La edad debe ser un número entero mayor o igual a 0";
-  }
+      return res.status(200).json({
+        ok: true,
+        message: "Usuario obtenido correctamente",
+        data: user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        ok: false,
+        message: "Error al obtener el usuario",
+        error: error.message,
+      });
+    }
+  },
 
-  return null;
-};
+  async create(req, res) {
+    try {
+      const { fullname, username, email, password, role, city, avatar } = req.body;
 
-const isValidId = (id) => {
-  const numericId = Number(id);
-  return Number.isInteger(numericId) && numericId > 0;
-};
-
-const toPlain = (model) => {
-  if (!model) return null;
-  return model.get({ plain: true });
-};
-
-const wantsJson = (req) => {
-  return req.is("application/json");
-};
-
-const renderUsers = async (req, res) => {
-  try {
-    const usersDb = await User.findAll({
-      attributes: userAttributes,
-      order: [["id", "ASC"]],
-    });
-
-    const users = usersDb.map((user) => toPlain(user));
-
-    return res.render("users/index", {
-      titulo: "Lista de usuarios",
-      users,
-    });
-  } catch (error) {
-    console.error("Error en renderUsers:", error);
-    return res.status(500).send("No se pudieron obtener los usuarios");
-  }
-};
-
-const getUsers = async (req, res) => {
-  try {
-    const users = await User.findAll({
-      attributes: userAttributes,
-      order: [["id", "ASC"]],
-    });
-
-    return res.status(200).json({
-      status: "success",
-      message: "Usuarios obtenidos correctamente",
-      data: users,
-    });
-  } catch (error) {
-    console.error("Error en getUsers:", error);
-
-    return res.status(500).json({
-      status: "error",
-      message: "Error al obtener usuarios",
-      data: null,
-    });
-  }
-};
-
-const showCreateForm = (req, res) => {
-  return res.render("users/create", {
-    titulo: "Crear usuario",
-    user: {},
-  });
-};
-
-const createUser = async (req, res) => {
-  try {
-    const userData = normalizeUserData(req.body);
-    const validationError = validateUserData(userData);
-
-    if (validationError) {
-      if (wantsJson(req)) {
+      if (!fullname || !username || !email || !password) {
         return res.status(400).json({
-          status: "error",
-          message: validationError,
-          data: null,
+          ok: false,
+          message: "fullname, username, email y password son obligatorios",
         });
       }
 
-      return res.status(400).render("users/create", {
-        titulo: "Crear usuario",
-        error: validationError,
-        user: userData,
+      const existingUser = await User.findOne({
+        where: {
+          [Op.or]: [{ email }, { username }],
+        },
       });
-    }
 
-    const existingUser = await User.findOne({
-      where: { email: userData.email },
-    });
-
-    if (existingUser) {
-      if (wantsJson(req)) {
-        return res.status(409).json({
-          status: "error",
-          message: "El email ya está registrado",
-          data: null,
-        });
+      if (existingUser) {
+        if (existingUser.email === email) {
+          return res.status(400).json({ ok: false, message: "El correo ya está registrado" });
+        }
+        return res.status(400).json({ ok: false, message: "El nombre de usuario ya está en uso" });
       }
 
-      return res.status(409).render("users/create", {
-        titulo: "Crear usuario",
-        error: "El email ya está registrado",
-        user: userData,
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = await User.create({
+        fullname,
+        username,
+        email,
+        password: hashedPassword,
+        role: role || "player",
+        city: city || null,
+        avatar: avatar || null,
       });
-    }
 
-    const newUser = await User.create(userData);
-
-    const createdUser = await User.findByPk(newUser.id, {
-      attributes: userAttributes,
-    });
-
-    if (wantsJson(req)) {
       return res.status(201).json({
-        status: "success",
+        ok: true,
         message: "Usuario creado correctamente",
-        data: createdUser,
+        data: sanitizeUser(newUser),
       });
-    }
-
-    return res.redirect("/usuarios/vista");
-  } catch (error) {
-    console.error("Error en createUser:", error);
-
-    if (error.name === "SequelizeUniqueConstraintError") {
-      if (wantsJson(req)) {
-        return res.status(409).json({
-          status: "error",
-          message: "El email ya está registrado",
-          data: null,
-        });
-      }
-
-      return res.status(409).render("users/create", {
-        titulo: "Crear usuario",
-        error: "El email ya está registrado",
-        user: normalizeUserData(req.body),
-      });
-    }
-
-    if (wantsJson(req)) {
+    } catch (error) {
       return res.status(500).json({
-        status: "error",
-        message: "Error al crear usuario",
-        data: null,
+        ok: false,
+        message: "Error al crear el usuario",
+        error: error.message,
       });
     }
+  },
 
-    return res.status(500).render("users/create", {
-      titulo: "Crear usuario",
-      error: "Error al crear usuario",
-      user: normalizeUserData(req.body),
-    });
-  }
-};
+  async update(req, res) {
+    try {
+      const { id } = req.params;
+      const { fullname, username, email, password, role, city } = req.body;
 
-const showEditForm = async (req, res) => {
-  try {
-    const { id } = req.params;
+      const user = await User.findByPk(id);
 
-    if (!isValidId(id)) {
-      return res.status(400).send("ID de usuario inválido");
-    }
-
-    const userDb = await User.findByPk(id, {
-      attributes: userAttributes,
-    });
-
-    if (!userDb) {
-      return res.status(404).send("Usuario no encontrado");
-    }
-
-    const user = toPlain(userDb);
-
-    return res.render("users/edit", {
-      titulo: "Editar usuario",
-      user,
-    });
-  } catch (error) {
-    console.error("Error en showEditForm:", error);
-    return res.status(500).send("Error al cargar usuario");
-  }
-};
-
-const updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!isValidId(id)) {
-      if (wantsJson(req)) {
-        return res.status(400).json({
-          status: "error",
-          message: "ID de usuario inválido",
-          data: null,
-        });
-      }
-
-      return res.status(400).send("ID de usuario inválido");
-    }
-
-    const userDb = await User.findByPk(id);
-
-    if (!userDb) {
-      if (wantsJson(req)) {
+      if (!user) {
         return res.status(404).json({
-          status: "error",
+          ok: false,
           message: "Usuario no encontrado",
-          data: null,
         });
       }
 
-      return res.status(404).send("Usuario no encontrado");
-    }
-
-    const userData = normalizeUserData(req.body);
-    const validationError = validateUserData(userData);
-
-    if (validationError) {
-      if (wantsJson(req)) {
-        return res.status(400).json({
-          status: "error",
-          message: validationError,
-          data: null,
+      if (email || username) {
+        const existingUser = await User.findOne({
+          where: {
+            id: { [Op.ne]: id },
+            [Op.or]: [
+              email ? { email } : null,
+              username ? { username } : null,
+            ].filter(Boolean),
+          },
         });
+
+        if (existingUser) {
+          if (email && existingUser.email === email) {
+            return res.status(400).json({ ok: false, message: "El correo ya está registrado" });
+          }
+          if (username && existingUser.username === username) {
+            return res.status(400).json({ ok: false, message: "El nombre de usuario ya está en uso" });
+          }
+        }
       }
 
-      return res.status(400).render("users/edit", {
-        titulo: "Editar usuario",
-        error: validationError,
-        user: { id: userDb.id, ...userData },
+      let updatedPassword = user.password;
+      if (password && password.trim() !== "") {
+        updatedPassword = await bcrypt.hash(password, 10);
+      }
+
+      // ✅ Procesa el archivo si se subió uno nuevo
+      const avatarPath = req.file
+        ? `/uploads/avatars/${req.file.filename}`
+        : (req.body.avatar ?? user.avatar);
+
+      await user.update({
+        fullname: fullname ?? user.fullname,
+        username: username ?? user.username,
+        email: email ?? user.email,
+        password: updatedPassword,
+        role: role ?? user.role,
+        city: city ?? user.city,
+        avatar: avatarPath,
       });
-    }
 
-    const existingUser = await User.findOne({
-      where: {
-        email: userData.email,
-        id: { [Op.ne]: userDb.id },
-      },
-    });
+      const sanitizedUser = sanitizeUser(user);
 
-    if (existingUser) {
-      if (wantsJson(req)) {
-        return res.status(409).json({
-          status: "error",
-          message: "El email ya está registrado",
-          data: null,
+      if (req.user && Number(req.user.id) === Number(user.id)) {
+        const refreshedToken = generateToken({
+          id: user.id,
+          fullname: user.fullname,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar,
         });
+        res.cookie(COOKIE_NAME, refreshedToken, getCookieOptions());
       }
 
-      return res.status(409).render("users/edit", {
-        titulo: "Editar usuario",
-        error: "El email ya está registrado",
-        user: { id: userDb.id, ...userData },
-      });
-    }
-
-    await userDb.update(userData);
-
-    const updatedUser = await User.findByPk(id, {
-      attributes: userAttributes,
-    });
-
-    if (wantsJson(req)) {
       return res.status(200).json({
-        status: "success",
+        ok: true,
         message: "Usuario actualizado correctamente",
-        data: updatedUser,
+        data: sanitizedUser,
       });
-    }
-
-    return res.redirect("/usuarios/vista");
-  } catch (error) {
-    console.error("Error en updateUser:", error);
-
-    if (error.name === "SequelizeUniqueConstraintError") {
-      if (wantsJson(req)) {
-        return res.status(409).json({
-          status: "error",
-          message: "El email ya está registrado",
-          data: null,
-        });
-      }
-
-      return res.status(409).render("users/edit", {
-        titulo: "Editar usuario",
-        error: "El email ya está registrado",
-        user: { id: req.params.id, ...normalizeUserData(req.body) },
-      });
-    }
-
-    if (wantsJson(req)) {
+    } catch (error) {
       return res.status(500).json({
-        status: "error",
-        message: "Error al actualizar usuario",
-        data: null,
+        ok: false,
+        message: "Error al actualizar el usuario",
+        error: error.message,
       });
     }
+  },
 
-    return res.status(500).render("users/edit", {
-      titulo: "Editar usuario",
-      error: "Error al actualizar usuario",
-      user: { id: req.params.id, ...normalizeUserData(req.body) },
-    });
-  }
-};
+  async remove(req, res) {
+    try {
+      const { id } = req.params;
 
-const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
+      const user = await User.findByPk(id);
 
-    if (!isValidId(id)) {
-      if (wantsJson(req)) {
-        return res.status(400).json({
-          status: "error",
-          message: "ID de usuario inválido",
-          data: null,
-        });
-      }
-
-      return res.status(400).send("ID de usuario inválido");
-    }
-
-    const user = await User.findByPk(id);
-
-    if (!user) {
-      if (wantsJson(req)) {
+      if (!user) {
         return res.status(404).json({
-          status: "error",
+          ok: false,
           message: "Usuario no encontrado",
-          data: null,
         });
       }
 
-      return res.status(404).send("Usuario no encontrado");
-    }
+      await user.destroy();
 
-    await user.destroy();
-
-    if (wantsJson(req)) {
       return res.status(200).json({
-        status: "success",
+        ok: true,
         message: "Usuario eliminado correctamente",
-        data: null,
       });
-    }
-
-    return res.redirect("/usuarios/vista");
-  } catch (error) {
-    console.error("Error en deleteUser:", error);
-
-    if (wantsJson(req)) {
+    } catch (error) {
       return res.status(500).json({
-        status: "error",
-        message: "Error al eliminar usuario",
-        data: null,
+        ok: false,
+        message: "Error al eliminar el usuario",
+        error: error.message,
       });
     }
-
-    return res.status(500).send("Error al eliminar usuario");
-  }
+  },
 };
 
-module.exports = {
-  renderUsers,
-  getUsers,
-  showCreateForm,
-  createUser,
-  showEditForm,
-  updateUser,
-  deleteUser,
-};
+module.exports = userController;

@@ -1,0 +1,57 @@
+<section class="page-section home-landing">
+  <div class="container">
+
+    <!-- Logo centrado -->
+    <div class="landing-logo-wrap">
+      <img
+        src="/IMG/logo.png"
+        alt="TCGConnect logo"
+        class="landing-logo"
+      />
+    </div>
+
+    <!-- Bloque de texto informativo -->
+    <div class="landing-info card">
+
+      <h1 class="landing-title">TCGConnect — Comunidad de Eventos TCG</h1>
+
+      <div class="landing-block">
+        <h2 class="landing-section-heading">¿Qué es?</h2>
+        <p>TCGConnect es una plataforma para la comunidad de juegos de cartas coleccionables. Funciona como un tablón de anuncios comunitario donde tiendas, organizadores y jugadores pueden publicar eventos de TCG — torneos, ligas, drafts y más — con su flyer, información relevante y un link de inscripción.</p>
+        <p>El resto de la comunidad puede explorar los eventos, filtrarlos por juego o formato, y guardarlos como favoritos para no perderse nada.</p>
+      </div>
+
+      <div class="landing-block">
+        <h2 class="landing-section-heading">¿Por qué existe?</h2>
+        <p>Hoy los eventos de TCG viven dispersos en grupos de WhatsApp, stories de Instagram y servidores de Discord. Si no estás en el grupo correcto, te enterás tarde o simplemente no te enterás. TCGConnect centraliza todo en un solo lugar, sin importar si jugás Pokémon, Magic: The Gathering, Yu-Gi-Oh!, One Piece TCG o cualquier otro juego.</p>
+      </div>
+
+      <div class="landing-block">
+        <h2 class="landing-section-heading">¿Para quién es?</h2>
+        <ul class="landing-list">
+          <li>
+            <span class="landing-list-icon">🏪</span>
+            <span><strong>Tiendas y organizadores</strong> que quieren darle visibilidad a sus eventos y llegar a más jugadores.</span>
+          </li>
+          <li>
+            <span class="landing-list-icon">🃏</span>
+            <span><strong>Jugadores</strong> que quieren encontrar eventos de su juego favorito sin tener que buscar en cinco lugares distintos.</span>
+          </li>
+        </ul>
+      </div>
+
+      {{#if isAuthenticated}}
+        <div class="landing-cta">
+          <a href="/eventos" class="btn">Ver eventos</a>
+          <a href="/eventos/new" class="btn btn-secondary">Crear evento</a>
+        </div>
+      {{else}}
+        <div class="landing-cta">
+          <a href="/eventos" class="btn">Ver eventos</a>
+          <a href="/register" class="btn btn-secondary">Registrarse</a>
+        </div>
+      {{/if}}
+
+    </div>
+  </div>
+</section>

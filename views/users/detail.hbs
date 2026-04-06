@@ -1,0 +1,65 @@
+<section class="page-section">
+  <div class="container">
+    <article class="event-detail">
+      <div class="event-detail__image">
+        <img
+          src="{{#if event.flyer}}{{event.flyer}}{{else}}/img/event-placeholder.jpg{{/if}}"
+          alt="{{event.title}}"
+        >
+      </div>
+
+      <div class="event-detail__body card">
+        <p class="eyebrow">
+          {{#if event.game}}{{event.game.name}}{{else}}TCG{{/if}}
+        </p>
+
+        <h2>{{event.title}}</h2>
+        <p class="lead">{{event.description}}</p>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Lugar</span>
+            <span>{{event.locationname}}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Dirección</span>
+            <span>{{event.address}}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Ciudad</span>
+            <span>{{event.city}}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Formato</span>
+            <span>{{event.format}}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Fecha</span>
+            <span>{{event.eventdate}}</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Organiza</span>
+            <span>
+              {{#if event.organizer}}{{event.organizer.fullname}}{{else}}Comunidad{{/if}}
+            </span>
+          </div>
+        </div>
+
+        <div class="actions mt-3">
+          {{#if event.registrationurl}}
+            <a href="{{event.registrationurl}}" class="btn" target="_blank" rel="noopener noreferrer">
+              Ir a inscripción
+            </a>
+          {{/if}}
+          <a href="/events" class="btn btn-light">Volver</a>
+          <a href="/events/new" class="btn btn-secondary">Publicar evento</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

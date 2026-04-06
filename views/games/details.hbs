@@ -1,0 +1,171 @@
+<section class="page-section">
+  <div class="container">
+
+    <article class="event-detail-shell">
+      <div class="event-detail-media card">
+        {{#if event.flyer}}
+          <img
+            src="{{event.flyer}}"
+            alt="Flyer de {{event.title}}"
+            class="event-detail-media__img"
+          />
+        {{else}}
+          <div class="event-detail-media__placeholder">
+            <span>Sin flyer</span>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="event-detail-main">
+        <div class="card event-detail-card">
+          <div class="event-detail-top">
+            {{#if event.game}}
+              <span class="event-game">{{event.game.name}}</span>
+            {{/if}}
+
+            {{#if event.isactive}}
+              <span class="chip" style="background:#dcfce7;color:#166534;">Activo</span>
+            {{else}}
+              <span class="chip" style="background:#fee2e2;color:#991b1b;">Inactivo</span>
+            {{/if}}
+          </div>
+
+          <h1 class="event-detail-title">{{event.title}}</h1>
+
+          {{#if event.description}}
+            <div class="event-detail-description">
+              <p>{{event.description}}</p>
+            </div>
+          {{/if}}
+
+          <div class="detail-grid event-detail-info">
+            <div class="detail-item">
+              <span class="detail-label">Fecha</span>
+              <span>{{event.formattedDate}}</span>
+            </div>
+
+            {{#if event.time}}
+              <div class="detail-item">
+                <span class="detail-label">Hora</span>
+                <span>{{event.time}}</span>
+              </div>
+            {{/if}}
+
+            {{#if event.city}}
+              <div class="detail-item">
+                <span class="detail-label">Ciudad</span>
+                <span>{{event.city}}</span>
+              </div>
+            {{/if}}
+
+            {{#if event.locationname}}
+              <div class="detail-item">
+                <span class="detail-label">Lugar</span>
+                <span>{{event.locationname}}</span>
+              </div>
+            {{/if}}
+
+            {{#if event.capacity}}
+              <div class="detail-item">
+                <span class="detail-label">Capacidad</span>
+                <span>{{event.capacity}} jugadores</span>
+              </div>
+            {{/if}}
+
+            {{#if event.price}}
+              <div class="detail-item">
+                <span class="detail-label">Precio</span>
+                <span>${{event.price}}</span>
+              </div>
+            {{/if}}
+          </div>
+
+          {{#if event.organizer}}
+            <div class="event-organizer-box">
+              <span class="detail-label">Organizado por</span>
+              <a href="/perfil/{{event.organizer.id}}" class="event-organizer-link">
+                {{#if event.organizer.fullname}}
+                  {{event.organizer.fullname}}
+                {{else}}
+                  {{event.organizer.username}}
+                {{/if}}
+              </a>
+            </div>
+          {{/if}}
+
+          <div class="actions event-detail-actions">
+            {{#if isAuthenticated}}
+              <button id="saveBtn" class="btn btn-save" data-event-id="{{event.id}}">
+                <span id="saveIcon">🔖</span>
+                <span id="saveText">Guardar evento</span>
+              </button>
+            {{/if}}
+
+            {{#if isOwner}}
+              <a href="/eventos/{{event.id}}/edit" class="btn btn-secondary">Editar</a>
+
+              <form action="/eventos/{{event.id}}?_method=DELETE" method="POST" onsubmit="return confirm('¿Eliminar este evento?')">
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+              </form>
+            {{/if}}
+
+            <a href="/eventos" class="btn btn-light">← Volver</a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+{{#if isAuthenticated}}
+<script>
+(async () => {
+  const btn = document.getElementById("saveBtn");
+  if (!btn) return;
+
+  const eventId = btn.dataset.eventId;
+
+  try {
+    const res = await fetch("/saved-events", { credentials: "same-origin" });
+    const data = await res.json();
+
+    if (data.ok && data.data.includes(parseInt(eventId))) {
+      document.getElementById("saveIcon").textContent = "❤️";
+      document.getElementById("saveText").textContent = "Guardado";
+      btn.classList.add("btn-saved");
+      btn.dataset.saved = "true";
+    }
+  } catch (_) {}
+
+  btn.addEventListener("click", async () => {
+    try {
+      const res = await fetch(`/eventos/${eventId}/save`, {
+        method: "POST",
+        credentials: "same-origin",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "No se pudo guardar el evento.");
+        return;
+      }
+
+      if (data.saved) {
+        document.getElementById("saveIcon").textContent = "❤️";
+        document.getElementById("saveText").textContent = "Guardado";
+        btn.classList.add("btn-saved");
+        btn.dataset.saved = "true";
+      } else {
+        document.getElementById("saveIcon").textContent = "🔖";
+        document.getElementById("saveText").textContent = "Guardar evento";
+        btn.classList.remove("btn-saved");
+        btn.dataset.saved = "false";
+      }
+    } catch (_) {
+      alert("Error de red.");
+    }
+  });
+})();
+</script>
+{{/if}}

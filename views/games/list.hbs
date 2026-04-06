@@ -1,0 +1,58 @@
+<section class="page-section">
+  <div class="container">
+    <div class="card hero">
+      <p class="brand">Juegos</p>
+      <h2>{{#if titulo}}{{titulo}}{{else}}Listado de juegos{{/if}}</h2>
+      <p>
+        Explora los TCG disponibles dentro de la plataforma y accede a sus detalles.
+      </p>
+
+      <div class="actions" style="margin-top: 1rem;">
+        <a href="/games/create" class="button">Agregar juego</a>
+      </div>
+    </div>
+
+    {{> alert}}
+
+    {{#if games.length}}
+      {{#each games}}
+        <article class="card">
+          {{#if this.image}}
+            <img
+              src="{{this.image}}"
+              alt="{{this.name}}"
+              style="width:100%; max-height:280px; object-fit:cover; border-radius:12px; margin-bottom:1rem;"
+            >
+          {{/if}}
+
+          <p class="brand">{{this.category}}</p>
+          <h2>{{this.name}}</h2>
+
+          <p>
+            {{this.description}}
+          </p>
+
+          <ul>
+            {{#if this.publisher}}<li><strong>Editorial / marca:</strong> {{this.publisher}}</li>{{/if}}
+            {{#if this.format}}<li><strong>Formato principal:</strong> {{this.format}}</li>{{/if}}
+            {{#if this.releaseYear}}<li><strong>Año:</strong> {{this.releaseYear}}</li>{{/if}}
+            {{#if this.minPlayers}}<li><strong>Jugadores:</strong> {{this.minPlayers}}</li>{{/if}}
+          </ul>
+
+          <div class="actions" style="margin-top: 1rem;">
+            <a href="/games/{{this.id}}" class="button">Ver detalle</a>
+            <a href="/games/{{this.id}}/edit" class="button" style="background:#6b7280;">Editar</a>
+          </div>
+        </article>
+      {{/each}}
+    {{else}}
+      <section class="card">
+        <h2>Aún no hay juegos cargados</h2>
+        <p>
+          Cuando agregues juegos al sistema, aparecerán aquí para que los usuarios puedan explorarlos.
+        </p>
+        <a href="/games/create" class="button">Crear primer juego</a>
+      </section>
+    {{/if}}
+  </div>
+</section>

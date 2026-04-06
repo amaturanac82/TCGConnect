@@ -1,0 +1,43 @@
+<header class="site-header">
+  <div class="container">
+    <nav class="navbar">
+      <a href="/" class="brand">TCGConnect</a>
+
+      <div class="nav-links">
+        <a href="/" class="{{#if (eq currentPath "/")}}active{{/if}}">Inicio</a>
+        <a href="/eventos" class="{{#if (startsWith currentPath "/eventos")}}active{{/if}}">Eventos</a>
+
+        {{#if isAuthenticated}}
+          <a href="/eventos/new" class="{{#if (eq currentPath "/eventos/new")}}active{{/if}}">Crear evento</a>
+        {{/if}}
+      </div>
+
+      <div class="nav-actions">
+        {{#if isAuthenticated}}
+          <div class="nav-user">
+            <a href="/auth/profile" class="nav-user-link">
+              {{#if currentUser.avatar}}
+                <img src="{{currentUser.avatar}}" alt="Avatar" class="nav-avatar" />
+              {{else}}
+                <div class="nav-avatar" style="display:grid;place-items:center;font-weight:800;font-size:0.9rem;color:#fff;background:#334155;">
+                  {{currentUser.username}}
+                </div>
+              {{/if}}
+              <div class="nav-user-info">
+                <span class="nav-user-name">{{currentUser.fullname}}</span>
+                <span class="nav-user-username">@{{currentUser.username}}</span>
+              </div>
+            </a>
+          </div>
+
+          <form action="/auth/logout" method="POST" class="logout-form">
+            <button type="submit" class="btn btn-light">Cerrar sesión</button>
+          </form>
+        {{else}}
+          <a href="/auth/login" class="{{#if (startsWith currentPath "/auth/login")}}active{{/if}} btn btn-light">Iniciar sesión</a>
+          <a href="/auth/register" class="{{#if (startsWith currentPath "/auth/register")}}active{{/if}} btn">Crear cuenta</a>
+        {{/if}}
+      </div>
+    </nav>
+  </div>
+</header>

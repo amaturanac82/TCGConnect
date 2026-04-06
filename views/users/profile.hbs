@@ -1,0 +1,284 @@
+<section class="page-section">
+  <div class="container">
+
+    {{!-- Hero del perfil --}}
+    <div class="profile-hero card">
+      <div class="profile-hero__sidebar">
+
+        <div class="profile-avatar-wrap">
+          {{#if user.avatar}}
+            <img id="avatarPreview" src="{{user.avatar}}" alt="Avatar" class="profile-avatar-img" />
+          {{else}}
+            <div id="avatarPreview" class="profile-avatar-placeholder">
+              {{user.username.[0]}}
+            </div>
+          {{/if}}
+
+          {{#if isOwnProfile}}
+            <label for="avatarInput" class="profile-avatar-btn" title="Cambiar foto">📷</label>
+            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
+          {{/if}}
+        </div>
+
+        <div>
+          <div class="profile-hero__username">{{user.username}}</div>
+          <div style="margin-top:0.4rem;">
+            {{#if (eq user.role "admin")}}
+              <span class="profile-role-badge profile-role-badge--admin">Admin</span>
+            {{else}}
+              <span class="profile-role-badge profile-role-badge--player">Jugador</span>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-hero__body">
+        <div>
+          <h1 class="profile-hero__name">
+            {{#if user.fullname}}{{user.fullname}}{{else}}{{user.username}}{{/if}}
+          </h1>
+          <p class="profile-hero__email">{{user.email}}</p>
+          {{#if user.city}}
+            <p class="profile-hero__city">📍 {{user.city}}</p>
+          {{/if}}
+        </div>
+
+        <div class="profile-stats-row">
+          <div class="profile-stat-card profile-stat-card--blue">
+            <div class="profile-stat-card__num">{{user.organizedCount}}</div>
+            <div class="profile-stat-card__label">Organizados</div>
+          </div>
+          <div class="profile-stat-card profile-stat-card--purple">
+            <div class="profile-stat-card__num">{{user.savedCount}}</div>
+            <div class="profile-stat-card__label">Guardados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Secciones de eventos --}}
+    <div class="profile-layout">
+
+      <section class="card profile-section">
+        <div class="section-heading">
+          <p class="eyebrow">Actividad</p>
+          <h3>Eventos organizados</h3>
+        </div>
+
+        {{#if user.organizedEvents.length}}
+          <div class="mini-event-list">
+            {{#each user.organizedEvents}}
+              <article class="mini-event-card">
+                <div class="mini-event-card__body">
+                  <div>
+                    <h4>{{this.title}}</h4>
+                    <p style="margin:0.2rem 0 0;">
+                      {{#if this.game}}
+                        <span class="event-game" style="font-size:0.78rem;margin-right:0.4rem;">{{this.game.name}}</span>
+                      {{/if}}
+                      <span style="color:var(--text-muted);font-size:0.88rem;">{{this.formattedDate}}</span>
+                    </p>
+                    {{#if this.city}}
+                      <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.88rem;">📍 {{this.city}}</p>
+                    {{/if}}
+                  </div>
+                  <a href="/eventos/{{this.id}}" class="btn btn-light" style="white-space:nowrap;flex-shrink:0;">Ver evento</a>
+                </div>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="profile-empty">
+            <div class="profile-empty__icon">🎴</div>
+            <p class="profile-empty__title">Sin eventos aún</p>
+            <p class="profile-empty__text">Este usuario todavía no ha publicado eventos.</p>
+          </div>
+        {{/if}}
+      </section>
+
+      <section class="card profile-section">
+        <div class="section-heading">
+          <p class="eyebrow">Guardados</p>
+          <h3>Eventos favoritos</h3>
+        </div>
+
+        {{#if user.savedEvents.length}}
+          <div class="mini-event-list">
+            {{#each user.savedEvents}}
+              <article class="mini-event-card">
+                <div class="mini-event-card__body">
+                  <div>
+                    <h4>{{this.title}}</h4>
+                    <p style="margin:0.2rem 0 0;">
+                      {{#if this.game}}
+                        <span style="display:inline-flex;padding:0.18rem 0.55rem;background:#ede9fe;color:#6d28d9;border-radius:999px;font-size:0.78rem;font-weight:700;margin-right:0.4rem;">{{this.game.name}}</span>
+                      {{/if}}
+                      <span style="color:var(--text-muted);font-size:0.88rem;">{{this.formattedDate}}</span>
+                    </p>
+                    {{#if this.city}}
+                      <p style="margin:0.2rem 0 0;color:var(--text-muted);font-size:0.88rem;">📍 {{this.city}}</p>
+                    {{/if}}
+                  </div>
+                  <a href="/eventos/{{this.id}}" class="btn btn-light" style="white-space:nowrap;flex-shrink:0;">Ver evento</a>
+                </div>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="profile-empty">
+            <div class="profile-empty__icon">🔖</div>
+            <p class="profile-empty__title">Sin favoritos aún</p>
+            <p class="profile-empty__text">Este usuario no tiene eventos guardados todavía.</p>
+          </div>
+        {{/if}}
+      </section>
+
+    </div>
+
+    {{!-- Formulario editar perfil --}}
+    {{#if isOwnProfile}}
+      <div class="card" style="margin-top:2rem;">
+        <div class="section-heading">
+          <p class="eyebrow">Configuración</p>
+          <h3>Editar perfil</h3>
+        </div>
+
+        <form id="editProfileForm" class="form-grid">
+          <div class="form-group">
+            <label for="ep-fullname">Nombre completo</label>
+            <input type="text" id="ep-fullname" name="fullname" value="{{user.fullname}}" placeholder="Tu nombre" />
+          </div>
+
+          <div class="form-group">
+            <label for="ep-username">Usuario</label>
+            <input type="text" id="ep-username" name="username" value="{{user.username}}" placeholder="@usuario" />
+          </div>
+
+          <div class="form-group">
+            <label for="ep-email">Correo</label>
+            <input type="email" id="ep-email" name="email" value="{{user.email}}" placeholder="correo@ejemplo.com" />
+          </div>
+
+          <div class="form-group">
+            <label for="ep-city">Ciudad</label>
+            <input type="text" id="ep-city" name="city" value="{{user.city}}" placeholder="Santiago, Valparaíso..." />
+          </div>
+
+          <div class="form-group">
+            <label for="ep-password">Nueva contraseña</label>
+            <input type="password" id="ep-password" name="password" placeholder="Dejar vacío para no cambiar" autocomplete="new-password" />
+          </div>
+
+          <div class="form-group">
+            <label for="ep-password2">Confirmar contraseña</label>
+            <input type="password" id="ep-password2" name="password2" placeholder="Repite la contraseña" autocomplete="new-password" />
+          </div>
+
+          <div class="form-group full">
+            <div id="editProfileMsg" style="display:none;" class="form-message"></div>
+          </div>
+
+          <div class="form-actions full" style="justify-content:flex-start;">
+            <button type="submit" class="btn">Guardar cambios</button>
+          </div>
+        </form>
+      </div>
+    {{/if}}
+
+  </div>
+</section>
+
+{{#if isOwnProfile}}
+<script>
+  // ── Avatar upload ────────────────────────────────
+  const avatarInput   = document.getElementById("avatarInput");
+  const avatarPreview = document.getElementById("avatarPreview");
+
+  avatarInput?.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const res  = await fetch(`/users/{{user.id}}`, {
+        method: "PUT",
+        credentials: "same-origin",
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) { alert(data.message || "No se pudo actualizar el avatar."); return; }
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (avatarPreview.tagName === "IMG") {
+          avatarPreview.src = ev.target.result;
+        } else {
+          const img = document.createElement("img");
+          img.id        = "avatarPreview";
+          img.src       = ev.target.result;
+          img.className = "profile-avatar-img";
+          avatarPreview.replaceWith(img);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      alert("Error de red al subir el avatar.");
+    }
+  });
+
+  // ── Editar perfil ────────────────────────────────
+  document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg       = document.getElementById("editProfileMsg");
+    const password  = document.getElementById("ep-password").value;
+    const password2 = document.getElementById("ep-password2").value;
+
+    if (password && password !== password2) {
+      msg.textContent  = "Las contraseñas no coinciden.";
+      msg.className    = "form-message error";
+      msg.style.display = "block";
+      return;
+    }
+
+    const body = {
+      fullname: document.getElementById("ep-fullname").value,
+      username: document.getElementById("ep-username").value,
+      email:    document.getElementById("ep-email").value,
+      city:     document.getElementById("ep-city").value,
+    };
+    if (password) body.password = password;
+
+    try {
+      const res  = await fetch(`/users/{{user.id}}`, {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        msg.textContent   = data.message || "Error al guardar.";
+        msg.className     = "form-message error";
+        msg.style.display = "block";
+        return;
+      }
+
+      msg.textContent   = "✓ Cambios guardados correctamente.";
+      msg.className     = "form-message success";
+      msg.style.display = "block";
+
+      document.getElementById("ep-password").value  = "";
+      document.getElementById("ep-password2").value = "";
+
+    } catch (err) {
+      msg.textContent   = "Error de red.";
+      msg.className     = "form-message error";
+      msg.style.display = "block";
+    }
+  });
+</script>
+{{/if}}
