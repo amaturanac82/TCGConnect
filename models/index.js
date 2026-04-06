@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
 const basename = path.basename(__filename);
-const sequelize = require(__dirname + "/../config/database.js"); // ← importa directo
+const sequelize = require(__dirname + "/../config/database.js");
 const db = {};
 
 fs.readdirSync(__dirname)
@@ -16,7 +16,10 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach((file) => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes,
+    );
     db[model.name] = model;
   });
 

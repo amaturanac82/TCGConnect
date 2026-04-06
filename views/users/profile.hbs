@@ -1,7 +1,6 @@
 <section class="page-section">
   <div class="container">
 
-    {{!-- Hero del perfil --}}
     <div class="profile-hero card">
       <div class="profile-hero__sidebar">
 
@@ -56,7 +55,6 @@
       </div>
     </div>
 
-    {{!-- Secciones de eventos --}}
     <div class="profile-layout">
 
       <section class="card profile-section">
@@ -135,7 +133,6 @@
 
     </div>
 
-    {{!-- Formulario editar perfil --}}
     {{#if isOwnProfile}}
       <div class="card" style="margin-top:2rem;">
         <div class="section-heading">
@@ -190,7 +187,7 @@
 
 {{#if isOwnProfile}}
 <script>
-  // ── Avatar upload ────────────────────────────────
+
   const avatarInput   = document.getElementById("avatarInput");
   const avatarPreview = document.getElementById("avatarPreview");
 
@@ -229,7 +226,6 @@
     }
   });
 
-  // ── Editar perfil ────────────────────────────────
   document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const msg       = document.getElementById("editProfileMsg");
@@ -267,7 +263,7 @@
         return;
       }
 
-      msg.textContent   = "✓ Cambios guardados correctamente.";
+      msg.textContent   = "Cambios guardados correctamente.";
       msg.className     = "form-message success";
       msg.style.display = "block";
 

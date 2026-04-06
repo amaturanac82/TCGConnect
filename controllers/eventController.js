@@ -80,7 +80,9 @@ const eventController = {
         gameid,
       } = req.body;
 
-      const flyerPath = req.file ? `/uploads/events/${req.file.filename}` : null;
+      const flyerPath = req.file
+        ? `/uploads/events/${req.file.filename}`
+        : null;
 
       const newEvent = await Event.create({
         title,
@@ -123,7 +125,6 @@ const eventController = {
         });
       }
 
-      // ✅ Admin puede editar cualquier evento
       const isOwner =
         req.user.role === "admin" ||
         Number(event.organizerid) === Number(req.user.id);
@@ -156,7 +157,6 @@ const eventController = {
         }
       });
 
-      // ✅ Procesa el flyer si se subió uno nuevo
       if (req.file) {
         dataToUpdate.flyer = `/uploads/events/${req.file.filename}`;
       }
@@ -189,7 +189,7 @@ const eventController = {
         });
       }
 
-      // ✅ Admin puede eliminar cualquier evento
+      // Admin puede eliminar cualquier evento
       const isOwner =
         req.user.role === "admin" ||
         Number(event.organizerid) === Number(req.user.id);

@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "SavedEvent",
       tableName: "saved_events",
       underscored: true,
-    }
+    },
   );
 
   return SavedEvent;

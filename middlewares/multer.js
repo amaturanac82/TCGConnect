@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     cb(null, `file-${uniqueSuffix}${ext}`);
-  }
+  },
 });
 
 const fileFilter = (req, file, cb) => {
@@ -24,13 +24,17 @@ const fileFilter = (req, file, cb) => {
     "image/jpeg",
     "image/png",
     "image/webp",
-    "image/jpg"
+    "image/jpg",
   ];
 
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Tipo de archivo no permitido. Solo se permiten imágenes JPG, PNG y WEBP."));
+    cb(
+      new Error(
+        "Tipo de archivo no permitido. Solo se permiten imágenes JPG, PNG y WEBP.",
+      ),
+    );
   }
 };
 
@@ -38,8 +42,8 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 2 * 1024 * 1024
-  }
+    fileSize: 2 * 1024 * 1024,
+  },
 });
 
 module.exports = upload;

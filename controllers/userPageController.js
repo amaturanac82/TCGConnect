@@ -20,11 +20,12 @@ const userPageController = {
     try {
       const { id } = req.params;
 
-      // Si la ruta no tiene authMiddleware, lee el token manualmente
       if (!req.user) {
         const token = req.cookies?.token;
         if (token) {
-          try { req.user = verifyToken(token); } catch (_) {}
+          try {
+            req.user = verifyToken(token);
+          } catch (_) {}
         }
       }
 
@@ -48,16 +49,24 @@ const userPageController = {
       if (!user) return res.status(404).send("Usuario no encontrado");
 
       const plainUser = user.toJSON();
-      const organizedEvents = (plainUser.organizedEvents || []).map(normalizeEvent);
-      const savedEvents     = (plainUser.savedEvents     || []).map(normalizeEvent);
+      const organizedEvents = (plainUser.organizedEvents || []).map(
+        normalizeEvent,
+      );
+      const savedEvents = (plainUser.savedEvents || []).map(normalizeEvent);
 
-      const currentUser  = req.user || null;
+      const currentUser = req.user || null;
       const isOwnProfile =
         currentUser &&
         (currentUser.role === "admin" || Number(currentUser.id) === Number(id));
 
-      // ✅ log en el lugar correcto
-      console.log("isOwnProfile →", isOwnProfile, "| currentUser →", currentUser?.id, "| profileId →", id);
+      console.log(
+        "isOwnProfile →",
+        isOwnProfile,
+        "| currentUser →",
+        currentUser?.id,
+        "| profileId →",
+        id,
+      );
 
       return res.render("users/profile", {
         titulo: `Perfil de ${plainUser.username}`,
@@ -67,7 +76,7 @@ const userPageController = {
           organizedEvents,
           savedEvents,
           organizedCount: organizedEvents.length,
-          savedCount:     savedEvents.length,
+          savedCount: savedEvents.length,
         },
       });
     } catch (error) {

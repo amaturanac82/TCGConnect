@@ -7,14 +7,14 @@ const verifyToken = (req, res, next) => {
     if (!authHeader) {
       return res.status(401).json({
         ok: false,
-        message: "Token no proporcionado"
+        message: "Token no proporcionado",
       });
     }
 
     if (!authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         ok: false,
-        message: "Formato de token inválido"
+        message: "Formato de token inválido",
       });
     }
 
@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json({
       ok: false,
       message: "Token inválido o expirado",
-      error: error.message
+      error: error.message,
     });
   }
 };

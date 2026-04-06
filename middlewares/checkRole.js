@@ -3,14 +3,14 @@ const checkRole = (...allowedRoles) => {
     if (!req.user) {
       return res.status(401).json({
         ok: false,
-        message: "Usuario no autenticado"
+        message: "Usuario no autenticado",
       });
     }
 
     if (!req.user.role || !allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         ok: false,
-        message: "No tienes permisos para realizar esta acción"
+        message: "No tienes permisos para realizar esta acción",
       });
     }
 

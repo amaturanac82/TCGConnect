@@ -4,7 +4,8 @@
       <p class="eyebrow">Acceso</p>
       <h2>{{titulo}}</h2>
       <p class="section-text">
-        Ingresa a tu cuenta para publicar eventos, ver tu perfil y administrar tu actividad en TCGConnect.
+        Ingresa a tu cuenta para publicar eventos, ver tu perfil y administrar
+        tu actividad en TCGConnect.
       </p>
     </div>
 
@@ -46,50 +47,21 @@
 </section>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("loginForm");
-    const message = document.getElementById("formMessage");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      message.textContent = "";
-      message.className = "form-message";
-
-      const identifier = form.identifier.value.trim();
-      const isEmail = identifier.includes("@");
-
-      const payload = {
-        [isEmail ? "email" : "username"]: identifier,
-        password: form.password.value,
-      };
-
-      try {
-        const response = await fetch("/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          body: JSON.stringify(payload),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          message.textContent = result.message || "No se pudo iniciar sesión";
-          message.className = "form-message error";
-          return;
-        }
-
-        message.textContent = result.message || "Login exitoso";
-        message.className = "form-message success";
-        form.reset();
-
-        setTimeout(() => {
-          window.location.href = result.redirect || "/auth/profile";
-        }, 500);
-      } catch (error) {
-        message.textContent = "Error de red al iniciar sesión";
-        message.className = "form-message error";
-      }
-    });
-  });
+  document.addEventListener("DOMContentLoaded", () => { const form =
+  document.getElementById("loginForm"); const message =
+  document.getElementById("formMessage"); form.addEventListener("submit", async
+  (e) => { e.preventDefault(); message.textContent = ""; message.className =
+  "form-message"; const identifier = form.identifier.value.trim(); const isEmail
+  = identifier.includes("@"); const payload = { [isEmail ? "email" :
+  "username"]: identifier, password: form.password.value, }; try { const
+  response = await fetch("/auth/login", { method: "POST", headers: {
+  "Content-Type": "application/json" }, credentials: "same-origin", body:
+  JSON.stringify(payload), }); const result = await response.json(); if
+  (!response.ok) { message.textContent = result.message || "No se pudo iniciar
+  sesión"; message.className = "form-message error"; return; }
+  message.textContent = result.message || "Login exitoso"; message.className =
+  "form-message success"; form.reset(); setTimeout(() => { window.location.href
+  = result.redirect || "/auth/profile"; }, 500); } catch (error) {
+  message.textContent = "Error de red al iniciar sesión"; message.className =
+  "form-message error"; } }); });
 </script>

@@ -17,7 +17,6 @@ router.get("/eventos/new", authMiddleware, eventPageController.createForm);
 router.get("/eventos/:id/edit", authMiddleware, eventPageController.editForm);
 router.get("/eventos/:id", eventPageController.detail);
 
-// Favoritos
 router.post("/eventos/:eventId/save", authMiddleware, savedEventController.toggle);
 router.get("/saved-events", authMiddleware, savedEventController.list);
 

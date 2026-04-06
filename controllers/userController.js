@@ -95,7 +95,8 @@ const userController = {
 
   async create(req, res) {
     try {
-      const { fullname, username, email, password, role, city, avatar } = req.body;
+      const { fullname, username, email, password, role, city, avatar } =
+        req.body;
 
       if (!fullname || !username || !email || !password) {
         return res.status(400).json({
@@ -112,9 +113,13 @@ const userController = {
 
       if (existingUser) {
         if (existingUser.email === email) {
-          return res.status(400).json({ ok: false, message: "El correo ya está registrado" });
+          return res
+            .status(400)
+            .json({ ok: false, message: "El correo ya está registrado" });
         }
-        return res.status(400).json({ ok: false, message: "El nombre de usuario ya está en uso" });
+        return res
+          .status(400)
+          .json({ ok: false, message: "El nombre de usuario ya está en uso" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -170,10 +175,17 @@ const userController = {
 
         if (existingUser) {
           if (email && existingUser.email === email) {
-            return res.status(400).json({ ok: false, message: "El correo ya está registrado" });
+            return res
+              .status(400)
+              .json({ ok: false, message: "El correo ya está registrado" });
           }
           if (username && existingUser.username === username) {
-            return res.status(400).json({ ok: false, message: "El nombre de usuario ya está en uso" });
+            return res
+              .status(400)
+              .json({
+                ok: false,
+                message: "El nombre de usuario ya está en uso",
+              });
           }
         }
       }
@@ -183,7 +195,6 @@ const userController = {
         updatedPassword = await bcrypt.hash(password, 10);
       }
 
-      // ✅ Procesa el archivo si se subió uno nuevo
       const avatarPath = req.file
         ? `/uploads/avatars/${req.file.filename}`
         : (req.body.avatar ?? user.avatar);

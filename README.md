@@ -1,201 +1,134 @@
-# Proyecto Módulo 7 (actualización) - Node, Express, PostgreSQL y Sequelize
+# TCGConnect
 
-Este proyecto fue desarrollado como parte del bootcamp y corresponde a la evolución del trabajo realizado en el módulo anterior.
+TCGConnect es una plataforma comunitaria para publicar, explorar y guardar eventos de juegos de cartas coleccionables como torneos, ligas, drafts y más.
 
-La aplicación está construida con **Node.js** y **Express**, incorporando persistencia de datos con **PostgreSQL** mediante **Sequelize ORM**, renderizado de vistas con **Handlebars** y una estructura organizada en el patrón **MVC**.
+La idea del proyecto es centralizar eventos que normalmente están dispersos en grupos de WhatsApp, Instagram o Discord, permitiendo que tiendas, organizadores y jugadores encuentren todo en un solo lugar.
 
-## Objetivo del proyecto
+## Funcionalidades
 
-El objetivo de este proyecto es desarrollar una aplicación web capaz de:
+- Registro e inicio de sesión de usuarios.
+- Creación, edición y eliminación de eventos.
+- Vista de detalle para cada evento.
+- Guardado de eventos favoritos.
+- Exploración de eventos publicados por la comunidad.
+- Diseño responsive para desktop y móvil.
 
-- levantar un servidor con Node.js y Express;
-- conectarse a una base de datos PostgreSQL;
-- gestionar usuarios mediante operaciones CRUD;
-- renderizar vistas dinámicas con Handlebars;
-- mantener una estructura ordenada por configuración, rutas, controladores, modelos y vistas.
-
-## Tecnologías utilizadas
+## Tecnologías usadas
 
 - Node.js
 - Express
+- Handlebars
 - PostgreSQL
 - Sequelize
-- pg
-- pg-hstore
-- hbs / Handlebars
-- method-override
-- dotenv
-- nodemon
+- HTML
+- CSS
+- JavaScript
 
-## Requisitos previos
+## Requisitos
 
-Para ejecutar este proyecto necesitas tener instalado:
+Antes de ejecutar el proyecto, necesitas tener instalado:
 
-- Node.js v18 o superior
+- Node.js
 - npm
 - PostgreSQL
-- Un cliente para gestionar base de datos (por ejemplo, pgAdmin o psql)
-- Un navegador web
 
 ## Instalación
 
-1. Clona este repositorio o descarga el proyecto.
-2. Abre una terminal dentro de la carpeta del proyecto.
-3. Instala las dependencias con el siguiente comando:
+1. Clona el repositorio:
+
+```bash
+git clone URL-DEL-REPOSITORIO
+cd NOMBRE-DEL-PROYECTO
+```
+
+2. Instala las dependencias:
 
 ```bash
 npm install
 ```
 
-## Configuración de variables de entorno
+3. Crea tu archivo `.env` en la raíz del proyecto con las variables necesarias.
 
-Antes de ejecutar el proyecto, debes crear un archivo `.env` en la raíz del proyecto con la configuración de conexión a tu base de datos.
+## Variables de entorno
 
-Ejemplo:
+Ejemplo de archivo `.env`:
 
 ```env
-DB_NAME=nombre_base_de_datos
+PORT=3000
+DB_NAME=ddbb_tcgconnect
 DB_USER=tu_usuario
 DB_PASSWORD=tu_password
 DB_HOST=localhost
-DB_PORT=5432
-PORT=3000
+DB_DIALECT=postgres
+JWT_SECRET=tu_secreto
 ```
 
-> Ajusta estos valores según tu entorno local.
-
-## Configuración de la base de datos
-
-Dentro del proyecto se incluye un script SQL en la carpeta:
-
-```bash
-scripts_ddbb/ddbb_modulo7.sql
-```
-
-Ese archivo puede utilizarse para crear la base de datos, tablas o datos iniciales necesarios para el funcionamiento del proyecto.
-
-Se recomienda:
-
-1. Crear la base de datos en PostgreSQL.
-2. Ejecutar el script `ddbb_modulo7.sql`.
-3. Verificar que las credenciales del archivo `.env` coincidan con tu configuración local.
+> Ajusta estas variables según tu configuración local.
 
 ## Ejecución del proyecto
 
-Para iniciar el proyecto en modo normal:
-
-```bash
-npm start
-```
-
-Para iniciarlo en modo desarrollo con nodemon:
+### Modo desarrollo
 
 ```bash
 npm run dev
 ```
 
-Luego puedes abrir el navegador en:
+### Modo producción
 
 ```bash
-http://localhost:3000
+npm start
 ```
 
-## Funcionalidades principales
-
-La aplicación actualmente permite:
-
-- visualizar la página principal;
-- visualizar una página informativa del proyecto;
-- listar usuarios registrados;
-- crear nuevos usuarios;
-- editar usuarios existentes;
-- eliminar usuarios;
-- trabajar con vistas dinámicas conectadas a base de datos.
-
-## Estructura del proyecto
+Si tu proyecto no usa `dev`, puedes ejecutar directamente:
 
 ```bash
-├── config
-│   └── database.js
+node app.js
+```
+
+o el archivo principal que corresponda.
+
+## Estructura general del proyecto
+
+```bash
+.
 ├── controllers
-│   ├── siteController.js
-│   └── userController.js
-├── logs
-│   └── log.txt
 ├── middlewares
-│   └── requestlogger.js
 ├── models
-│   ├── User.js
-│   └── index.js
-├── public
-│   └── css
-│       └── styles.css
 ├── routes
-│   ├── siteRoutes.js
-│   └── userRoutes.js
-├── scripts_ddbb
-│   └── ddbb_modulo7.sql
-├── utils
-│   └── fileManager.js
 ├── views
-│   ├── layouts
-│   │   └── main.hbs
-│   ├── users
-│   │   ├── create.hbs
-│   │   ├── edit.hbs
-│   │   └── index.hbs
-│   ├── about.hbs
-│   └── home.hbs
-├── README.md
+├── public
+├── config
 ├── app.js
-├── package-lock.json
 └── package.json
 ```
 
-## Organización del proyecto
+## Rutas principales
 
-La aplicación fue organizada siguiendo una estructura modular:
+- `/` — Página principal.
+- `/events` o `/eventos` — Listado de eventos.
+- `/events/new` o `/eventos/new` — Crear evento.
+- `/events/:id` o `/eventos/:id` — Ver detalle del evento.
+- `/login` — Iniciar sesión.
+- `/register` — Registrarse.
 
-- `config/`: configuración de la conexión a la base de datos.
-- `controllers/`: lógica de negocio y manejo de las solicitudes.
-- `models/`: definición de modelos Sequelize.
-- `routes/`: definición de rutas del sistema.
-- `views/`: plantillas Handlebars para renderizar las vistas.
-- `public/`: archivos estáticos como hojas de estilo.
-- `scripts_ddbb/`: scripts SQL de apoyo para la base de datos.
+## Uso
 
-## Rutas generales
+1. Inicia sesión o regístrate.
+2. Crea un evento con su información y flyer.
+3. Explora los eventos publicados.
+4. Guarda los eventos que te interesen.
+5. Edita o elimina tus propios eventos cuando lo necesites.
 
-Las rutas del sistema están organizadas en archivos separados dentro de `routes/`.
+## Notas
 
-De forma general, el proyecto contempla:
-
-- rutas públicas del sitio;
-- rutas para gestión de usuarios;
-- vistas para listar, crear y editar usuarios;
-- endpoints asociados al flujo CRUD.
-
-> Las rutas exactas pueden revisarse directamente en `siteRoutes.js` y `userRoutes.js`.
-
-## Decisiones tomadas
-
-- Se mantuvo `app.js` como punto de entrada principal del proyecto.
-- Se utilizó una estructura MVC para mejorar la organización del código.
-- Se incorporó Sequelize para facilitar la conexión y manipulación de datos en PostgreSQL.
-- Se usó Handlebars para generar vistas dinámicas en el servidor.
-- Se separaron las responsabilidades del proyecto en carpetas específicas para mantener una arquitectura más clara y escalable.
-
-## Estado actual
-
-Actualmente, el proyecto cuenta con:
-
-- servidor funcional con Express;
-- conexión a base de datos PostgreSQL;
-- modelo de usuarios con Sequelize;
-- vistas dinámicas con Handlebars;
-- operaciones CRUD para la gestión de usuarios;
-- estructura organizada para continuar ampliando funcionalidades.
+- El proyecto está orientado a la comunidad de TCG.
+- La información de cada evento puede incluir juego, ciudad, fecha, descripción, capacidad, precio y flyer.
+- Los usuarios autenticados pueden guardar eventos favoritos.
 
 ## Autor
 
-Proyecto desarrollado por Andres Maturana como parte del proceso de aprendizaje en el bootcamp de Desarrollo de Aplicaciones Full Stack JavaScript.
+Andres Maturana
+
+## Licencia
+
+Proyecto académico / personal.  

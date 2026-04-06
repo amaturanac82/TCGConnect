@@ -30,7 +30,7 @@ app.engine(
       allowProtoMethodsByDefault: true,
     },
     helpers: {
-      ...hbsHelpers,           // ✅ spread del archivo — elimina duplicación
+      ...hbsHelpers,           
       formatDate: (value) => {
         if (!value) return "";
         return new Date(value).toLocaleString("es-CL");

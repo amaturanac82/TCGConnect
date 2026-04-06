@@ -22,7 +22,12 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    return apiResponse.error(res, "Token inválido o expirado", error.message, 401);
+    return apiResponse.error(
+      res,
+      "Token inválido o expirado",
+      error.message,
+      401,
+    );
   }
 };
 

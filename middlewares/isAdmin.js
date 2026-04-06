@@ -10,7 +10,7 @@ const isAdmin = (req, res, next) => {
       res,
       "No tienes permisos para realizar esta acción",
       null,
-      403
+      403,
     );
   }
 

@@ -29,7 +29,7 @@ const authController = {
           res,
           "fullname, username, email y password son obligatorios",
           null,
-          400
+          400,
         );
       }
 
@@ -40,7 +40,12 @@ const authController = {
       });
 
       if (existingUser) {
-        return apiResponse.error(res, "El correo o username ya está registrado", null, 400);
+        return apiResponse.error(
+          res,
+          "El correo o username ya está registrado",
+          null,
+          400,
+        );
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -67,10 +72,15 @@ const authController = {
           city: newUser.city,
           avatar: newUser.avatar,
         },
-        201
+        201,
       );
     } catch (error) {
-      return apiResponse.error(res, "Error al registrar el usuario", error.message, 500);
+      return apiResponse.error(
+        res,
+        "Error al registrar el usuario",
+        error.message,
+        500,
+      );
     }
   },
 
@@ -83,7 +93,7 @@ const authController = {
           res,
           "Debes enviar email o username, y password",
           null,
-          400
+          400,
         );
       }
 
@@ -127,7 +137,12 @@ const authController = {
         },
       });
     } catch (error) {
-      return apiResponse.error(res, "Error al iniciar sesión", error.message, 500);
+      return apiResponse.error(
+        res,
+        "Error al iniciar sesión",
+        error.message,
+        500,
+      );
     }
   },
 
@@ -164,16 +179,27 @@ const authController = {
         return apiResponse.error(res, "Usuario no encontrado", null, 404);
       }
 
-      return apiResponse.success(res, "Perfil obtenido correctamente", user, 200);
+      return apiResponse.success(
+        res,
+        "Perfil obtenido correctamente",
+        user,
+        200,
+      );
     } catch (error) {
-      return apiResponse.error(res, "Error al obtener el perfil", error.message, 500);
+      return apiResponse.error(
+        res,
+        "Error al obtener el perfil",
+        error.message,
+        500,
+      );
     }
   },
 
   logout(req, res) {
     res.clearCookie(COOKIE_NAME, clearCookieOptions());
 
-    const wantsHtml = req.headers.accept && req.headers.accept.includes("text/html");
+    const wantsHtml =
+      req.headers.accept && req.headers.accept.includes("text/html");
 
     if (wantsHtml) {
       return res.redirect("/auth/login");

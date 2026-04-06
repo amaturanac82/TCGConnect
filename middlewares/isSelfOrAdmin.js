@@ -17,7 +17,7 @@ const isSelfOrAdmin = (req, res, next) => {
         res,
         "No tienes permisos para realizar esta acción",
         null,
-        403
+        403,
       );
     }
 
@@ -27,7 +27,7 @@ const isSelfOrAdmin = (req, res, next) => {
       res,
       "Error al validar permisos del usuario",
       error.message,
-      500
+      500,
     );
   }
 };

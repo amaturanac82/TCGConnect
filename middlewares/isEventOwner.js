@@ -9,7 +9,7 @@ const isEventOwner = async (req, res, next) => {
     if (!event) {
       return res.status(404).json({
         ok: false,
-        message: "Evento no encontrado"
+        message: "Evento no encontrado",
       });
     }
 
@@ -21,7 +21,7 @@ const isEventOwner = async (req, res, next) => {
     if (Number(event.organizer_id) !== Number(req.user.id)) {
       return res.status(403).json({
         ok: false,
-        message: "No tienes permisos para modificar este evento"
+        message: "No tienes permisos para modificar este evento",
       });
     }
 
@@ -31,7 +31,7 @@ const isEventOwner = async (req, res, next) => {
     return res.status(500).json({
       ok: false,
       message: "Error al validar propietario del evento",
-      error: error.message
+      error: error.message,
     });
   }
 };

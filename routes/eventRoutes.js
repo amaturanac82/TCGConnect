@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const uploadEventFlyer = require("../middlewares/uploadEventFlyer");
 
 router.get("/", eventController.list);
-router.get("/:id", eventController.detail);  // ✅ eliminada la línea de /new
+router.get("/:id", eventController.detail);
 
 router.post("/", authMiddleware, uploadEventFlyer.single("flyer"), eventController.create);
 router.put("/:id", authMiddleware, uploadEventFlyer.single("flyer"), eventController.update);

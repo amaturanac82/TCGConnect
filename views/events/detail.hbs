@@ -3,7 +3,6 @@
 
     <div class="event-detail">
 
-      {{!-- Imagen / placeholder --}}
       <div class="event-detail__image">
         {{#if event.flyer}}
           <img src="{{event.flyer}}" alt="Flyer de {{event.title}}" />
@@ -14,7 +13,6 @@
         {{/if}}
       </div>
 
-      {{!-- Contenido principal --}}
       <div>
         <p class="eyebrow">{{event.game.name}}</p>
         <h1 style="margin-bottom:1rem;color:var(--bg);">{{event.title}}</h1>
@@ -74,10 +72,8 @@
           </div>
         {{/if}}
 
-        {{!-- Acciones --}}
         <div class="actions" style="margin-top:1.5rem;">
 
-          {{!-- Botón guardar favorito --}}
           {{#if isAuthenticated}}
             <button id="saveBtn" class="btn btn-save" data-event-id="{{event.id}}">
               <span id="saveIcon">🔖</span>
@@ -85,7 +81,6 @@
             </button>
           {{/if}}
 
-          {{!-- Acciones de dueño --}}
           {{#if isOwner}}
             <a href="/eventos/{{event.id}}/edit" class="btn btn-secondary">Editar</a>
 
@@ -110,7 +105,6 @@
 
   const eventId = btn.dataset.eventId;
 
-  // Verifica si ya está guardado
   try {
     const res  = await fetch("/saved-events", { credentials: "same-origin" });
     const data = await res.json();
@@ -122,7 +116,6 @@
     }
   } catch (_) {}
 
-  // Toggle al hacer click
   btn.addEventListener("click", async () => {
     try {
       const res  = await fetch(`/eventos/${eventId}/save`, {
